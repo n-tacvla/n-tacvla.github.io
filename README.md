@@ -1,6 +1,6 @@
 # N-TacVLA project site
 
-Author: Yu Sun. Affiliations supplied by the author: 戴盟机器人公司、大湾区大学、哈尔滨工业大学深圳。
+Author: Yu Sun. Affiliations supplied by the author: Daimon Robotics, Great Bay University, and Harbin Institute of Technology, Shenzhen.
 
 Public research project page with one recorded G1 multimodal replay sample. No paper, model metrics, success rates or author affiliation mapping are inferred. Update `app/page.tsx` for project copy, `app/Replay.tsx` for replay controls, and `app/globals.css` for styling.
 
@@ -23,15 +23,19 @@ npm run build:pages
 
 `npm run build:pages` exports to `dist/pages/`, including the recorded sample. It derives the URL prefix from `GITHUB_REPOSITORY` (default `n-tacvla/n-tacvla.github.io`). Deploy the contents of this directory, not its parent. The organization website and local development both serve at `/`. To preview the static build, run `python3 -m http.server 8089 --bind 127.0.0.1 --directory dist/pages` and visit `http://127.0.0.1:8089/`.
 
-The earlier `clearlove-Yu/N-TacVLA` project site is retained. In this workstation checkout, `organization` is the remote for the new primary website; `github` points to the earlier repository. Future website updates should be pushed with `git push organization main`.
+The earlier `clearlove-Yu/N-TacVLA` Pages website has been unpublished and its publishing workflow disabled. Its source repository is retained as a backup. In this workstation checkout, `organization` is the publishing remote; `github` is the old backup. Push website updates with `git push organization main`. The separate personal homepage at `https://clearlove-yu.github.io/` remains active.
 
-The source and deployment are isolated from the robot project. The old Sites configuration in `.openai/hosting.json` is retained as historical deployment metadata. The GitHub Pages build uses static export and does not enable Sites hosting, authentication or Cloudflare Workers. No credentials belong in source or this document.
+The source and deployment are isolated from the robot project. The old `chatgpt.site` deployment is owner-only; public access is closed. Its identity in `.openai/hosting.json` is retained as historical metadata. The GitHub Pages build uses static export and does not enable Sites hosting, authentication or Cloudflare Workers. No credentials belong in source or this document.
 
 ## Replay data
 
 `public/sample/` contains MP4 viewing copies and `replay.json`, exported from `episode_20260916T090235_676Z_push_box`. The original recording is labeled failure and technically invalid; the website displays these labels. It is an inspection sample, not model evaluation evidence.
 
 Videos use 15 Hz samples on the G1 receive-time clock, with each frame taken from the last original camera sample at or before that time. Stereo eyes are rotated individually without swapping sides. Tactile data retains every sample, its original relative timestamp, validity, force, direction and proximity count. Gaps over 100 ms are marked stale; missing/invalid values remain unavailable. Normal/shear raw values use the existing protocol's 0.01 N unit. Proximity is a raw count, not distance. The browser is a viewing tool, not hardware-synchronized metrology.
+
+Regional time series show each of the eight force regions separately, or five fingertip regions for proximity. Select both hands or a single hand, and all regions or one region. Each plot has its own vertical scale, labeled in N or raw counts. Clicking a plot seeks the shared video timeline. Invalid samples and long gaps break the curves. `npm test` checks channel selection, units, missing data, and cursor timing.
+
+English camera and region labels are defined in `app/replay-data.ts`, independent of cached JSON labels. Builds include a content hash in the replay data URL, and the browser revalidates that data to prevent stale translations after publishing.
 
 To prepare a replacement sample, export into a new empty directory, inspect its content and quality labels, then replace `public/sample/` and republish:
 

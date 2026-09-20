@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 
 const repository = process.env.GITHUB_REPOSITORY || 'n-tacvla/n-tacvla.github.io';
@@ -9,10 +10,11 @@ if (!owner || !name || extra || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repos
 }
 const basePath = name.toLowerCase() === `${owner.toLowerCase()}.github.io` ? '' : `/${name}`;
 const siteUrl = `https://${owner.toLowerCase()}.github.io${basePath}/`;
+const replayHash = createHash('sha256').update(readFileSync('public/sample/replay.json')).digest('hex').slice(0, 16);
 console.log(`Building static GitHub Pages website: ${siteUrl}`);
 const result = spawnSync(process.execPath, ['node_modules/.bin/vinext', 'build'], {
   stdio: 'inherit',
-  env: { ...process.env, GITHUB_PAGES: '1', NEXT_PUBLIC_BASE_PATH: basePath, NEXT_PUBLIC_SITE_URL: siteUrl },
+  env: { ...process.env, GITHUB_PAGES: '1', NEXT_PUBLIC_BASE_PATH: basePath, NEXT_PUBLIC_SITE_URL: siteUrl, NEXT_PUBLIC_REPLAY_HASH: replayHash },
 });
 if (result.error) throw result.error;
 if (result.status !== 0) process.exit(result.status || 1);
