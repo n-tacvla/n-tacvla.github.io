@@ -4,6 +4,10 @@ Author: Yu Sun. Affiliations supplied by the author: 戴盟机器人公司、大
 
 Public research project page with one recorded G1 multimodal replay sample. No paper, model metrics, success rates or author affiliation mapping are inferred. Update `app/page.tsx` for project copy, `app/Replay.tsx` for replay controls, and `app/globals.css` for styling.
 
+Website: **https://clearlove-yu.github.io/N-TacVLA/**
+
+Hosted by GitHub Pages from the public `clearlove-Yu/N-TacVLA` repository. Pushing `main` runs `.github/workflows/pages.yml`, builds static files and publishes them. Set the repository's Pages source to **GitHub Actions**. No hosting token is stored in this project.
+
 ## Develop and build
 
 Requires Node >=22.13 and npm. This workstation's isolated Node installation is `/home/a/.local/share/humanoidarena/tools/node-v24.21.0-linux-x64/bin`.
@@ -14,10 +18,12 @@ cd /home/a/work/HumanoidArena/web/n-tacvla
 npm ci
 npm run dev -- --host 127.0.0.1
 # In another terminal:
-npm run build
+npm run build:pages
 ```
 
-The source and deployment are isolated from the robot project. Sites project identity is stored in `.openai/hosting.json`; never create a second site when its project ID already exists. No credentials belong in source or this document.
+`npm run build:pages` exports to `dist/pages/`, including the recorded sample. It derives the URL prefix from `GITHUB_REPOSITORY` (default `clearlove-Yu/N-TacVLA`). Deploy the contents of this directory, not its parent. For local development `npm run dev` serves at `/`; a production preview must mount `dist/pages/` at `/N-TacVLA/` to match its asset URLs.
+
+The source and deployment are isolated from the robot project. The old Sites configuration in `.openai/hosting.json` is retained as historical deployment metadata. The GitHub Pages build uses static export and does not enable Sites hosting, authentication or Cloudflare Workers. No credentials belong in source or this document.
 
 ## Replay data
 

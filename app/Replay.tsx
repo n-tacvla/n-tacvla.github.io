@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { assetUrl } from './site';
 
 type Sample = {t: number; valid: boolean; n: number[] | null; shear: number[] | null; direction: (number | null)[] | null; proximity: number[] | null};
 type Camera = {id: string; label: string; video: string; poster: string; times: number[]};
@@ -51,7 +52,7 @@ export default function Replay() {
   const [data,setData]=useState<Recording|null>(null), [error,setError]=useState('');
   const [time,setTime]=useState(0),[playing,setPlaying]=useState(false),[speed,setSpeed]=useState(1),[metric,setMetric]=useState<Metric>('n');
   const videos=useRef<(HTMLVideoElement|null)[]>([]);
-  useEffect(()=>{const abort=new AbortController();fetch('/sample/replay.json',{signal:abort.signal}).then(r=>{if(!r.ok)throw new Error('回放数据加载失败');return r.json() as Promise<Recording>;}).then(setData).catch(e=>{if(e.name!=='AbortError')setError('回放加载失败，请刷新页面重试。');});return()=>abort.abort();},[]);
+  useEffect(()=>{const abort=new AbortController();fetch(assetUrl('sample/replay.json'),{signal:abort.signal}).then(r=>{if(!r.ok)throw new Error('回放数据加载失败');return r.json() as Promise<Recording>;}).then(setData).catch(e=>{if(e.name!=='AbortError')setError('回放加载失败，请刷新页面重试。');});return()=>abort.abort();},[]);
   useEffect(()=>{
     if(!data)return;let request=0;
     const tick=()=>{const master=videos.current[0];if(master && !master.paused){const t=Math.min(data.duration,Math.floor(master.currentTime*data.preview_fps)/data.preview_fps);setTime(t);for(const v of videos.current.slice(1)){if(v && v.readyState>=2 && Math.abs(v.currentTime-master.currentTime)>.15)v.currentTime=master.currentTime;}if(master.currentTime>=data.duration){videos.current.forEach(v=>v?.pause());setPlaying(false);setTime(data.duration);}}request=requestAnimationFrame(tick);};
@@ -70,7 +71,7 @@ export default function Replay() {
     <div className="replay-heading"><span><span className="dot"/> RECORDED SESSION</span><span>{timestamp(data.duration)} · 15 Hz 观看副本</span></div>
     <div className="video-grid">{data.cameras.map((camera,index)=>{
       const last=previous(camera.times,time,x=>x),missing=last===undefined,stale=!missing && (time-last)*1000>data.max_age_ms;
-      return <figure key={camera.id} className={`${index===0?'head-view':''} ${stale?'stale-video':''}`}><video ref={v=>{videos.current[index]=v;}} src={`/sample/${camera.video}`} poster={`/sample/${camera.poster}`} muted playsInline preload="metadata" onLoadedMetadata={e=>{e.currentTarget.currentTime=time;e.currentTarget.playbackRate=speed;}} onEnded={()=>{videos.current.forEach(v=>v?.pause());setPlaying(false);}} onError={()=>setError('一路视频加载失败，请检查网络并刷新页面。')} aria-label={camera.label}/><figcaption><span>{camera.label}</span><span>{missing?'尚无采样':stale?'帧间隔过长':'视频记录'}</span></figcaption></figure>;
+      return <figure key={camera.id} className={`${index===0?'head-view':''} ${stale?'stale-video':''}`}><video ref={v=>{videos.current[index]=v;}} src={assetUrl(`sample/${camera.video}`)} poster={assetUrl(`sample/${camera.poster}`)} muted playsInline preload="metadata" onLoadedMetadata={e=>{e.currentTarget.currentTime=time;e.currentTarget.playbackRate=speed;}} onEnded={()=>{videos.current.forEach(v=>v?.pause());setPlaying(false);}} onError={()=>setError('一路视频加载失败，请检查网络并刷新页面。')} aria-label={camera.label}/><figcaption><span>{camera.label}</span><span>{missing?'尚无采样':stale?'帧间隔过长':'视频记录'}</span></figcaption></figure>;
     })}</div>
     <div className="transport"><button className="play-button" onClick={()=>void toggle()} aria-label={playing?'暂停回放':'播放回放'}>{playing?'Ⅱ':'▶'} <span>{playing?'暂停':'播放'}</span></button><button className="step" onClick={()=>seek(time-1/data.preview_fps)} aria-label="前一观看帧">‹</button><button className="step" onClick={()=>seek(time+1/data.preview_fps)} aria-label="后一观看帧">›</button><span className="timecode">{timestamp(time)} / {timestamp(data.duration)}</span><label className="speed">速度 <select value={speed} onChange={e=>{const next=Number(e.target.value);setSpeed(next);videos.current.forEach(v=>{if(v)v.playbackRate=next;});}}>{[.25,.5,1,2].map(s=><option key={s} value={s}>{s}×</option>)}</select></label></div>
     <input className="timeline" type="range" min={0} max={data.duration} step={1/data.preview_fps} value={time} onChange={e=>seek(Number(e.target.value))} aria-label="回放时间轴" aria-valuetext={`${time.toFixed(2)} 秒`}/>

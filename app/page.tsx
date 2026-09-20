@@ -1,4 +1,5 @@
 import Replay from './Replay';
+import { assetUrl } from './site';
 
 export default function Home() {
   return <>
@@ -8,7 +9,7 @@ export default function Home() {
         <div className="eyebrow"><span className="dot" /> VISUAL · TACTILE · PROXIMITY</div>
         <h1>N-<span>Tac</span>VLA</h1>
         <div className="hero-intro"><h2>视觉与触觉，<br />在真实交互中相遇。</h2><div><p>探索人形机器人的多模态交互。<br />从第一视角视频，到指尖接触与接近觉，<br />回看同一段遥操作中的动作与感知。</p><a className="button" href="#replay">探索数据回放 <span>↗</span></a></div></div>
-        <div className="hero-camera"><img src="/media/stereo.jpg" alt="G1 头部双目相机记录的实验场景与双手" /><div className="camera-top"><span>G1 / EGOCENTRIC VIEW</span><span>RECORDED DEMONSTRATION</span></div><div className="camera-bottom"><span>两只眼睛，一个交互现场。</span><span>HEAD STEREO / L + R</span></div></div>
+        <div className="hero-camera"><img src={assetUrl('media/stereo.jpg')} alt="G1 头部双目相机记录的实验场景与双手" /><div className="camera-top"><span>G1 / EGOCENTRIC VIEW</span><span>RECORDED DEMONSTRATION</span></div><div className="camera-bottom"><span>两只眼睛，一个交互现场。</span><span>HEAD STEREO / L + R</span></div></div>
         <div className="author-line" id="team"><span className="author">Yu Sun</span><span>戴盟机器人公司</span><span>大湾区大学</span><span>哈尔滨工业大学深圳</span></div>
       </section>
       <section className="section wrap overview" id="overview"><div className="section-label">01 / THE PROJECT</div><div><h2>让动作可见，<br />让接触有迹可循。</h2><p className="lead">N-TacVLA 项目页展示 G1 遥操作与多模态数据采集。头部双目、腕部相机、触觉与接近觉记录，为观察双手交互提供互补视角。</p><div className="facts"><div><strong>G1</strong><span>人形机器人平台</span></div><div><strong>双手</strong><span>灵巧手交互</span></div><div><strong>多模态</strong><span>视频与接触记录</span></div></div></div></section>
