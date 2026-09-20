@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const repository = process.env.GITHUB_REPOSITORY || 'clearlove-Yu/N-TacVLA';
+const repository = process.env.GITHUB_REPOSITORY || 'n-tacvla/n-tacvla.github.io';
 const [owner, name, extra] = repository.split('/');
 if (!owner || !name || extra || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)) {
   throw new Error('GITHUB_REPOSITORY must be owner/repository');
